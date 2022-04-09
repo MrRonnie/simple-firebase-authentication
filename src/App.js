@@ -1,6 +1,7 @@
 import "./App.css";
 import {
   getAuth,
+  GithubAuthProvider,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
@@ -12,13 +13,27 @@ const auth = getAuth(app);
 
 function App() {
   const [user, setUser] = useState({});
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
+
   const handleGoogleSignIn = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleProvider)
       .then((result) => {
         const user = result.user;
         console.log(user);
         setUser(user);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleGithubSingIn = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        console.log(user);
       })
       .catch((error) => {
         console.error(error);
@@ -35,11 +50,14 @@ function App() {
   };
   return (
     <div className="App">
-      {/* {conditon? true : false} */}
-      {user.email ? (
+      {/* {condition? true : false} */}
+      {user.uid ? (
         <button onClick={handleSingOut}>Sing Out</button>
       ) : (
-        <button onClick={handleGoogleSignIn}>Google Sing In</button>
+        <>
+          <button onClick={handleGoogleSignIn}>Google Sing In</button>
+          <button onClick={handleGithubSingIn}>Github Sing In</button>
+        </>
       )}
 
       <h2>Name: {user.displayName}</h2>
